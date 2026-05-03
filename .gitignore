@@ -1,5 +1,6 @@
 ﻿db.sqlite3
 docker-compose.yml
+
 __pycache__/
 *.pyc
 .venv/
@@ -7,3 +8,4 @@ __pycache__/
 .idea/
 media/
 *.json
+!ml/models/trained_fitness_model_simple.pkl
