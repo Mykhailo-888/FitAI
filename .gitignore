@@ -1,0 +1,9 @@
+﻿db.sqlite3
+docker-compose.yml
+__pycache__/
+*.pyc
+.venv/
+*.pkl
+.idea/
+media/
+*.json
