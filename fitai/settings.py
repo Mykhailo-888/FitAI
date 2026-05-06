@@ -1,15 +1,28 @@
 from pathlib import Path
 import os
 
+# =========================
+# BASE
+# =========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "dev-secret-key"
 
-DEBUG = os.getenv("DEBUG", "True") == "True"
+# =========================
+# SECURITY
+# =========================
+SECRET_KEY = os.environ["SECRET_KEY"]  # тільки env, без fallback
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = os.environ.get("DEBUG", "false").lower() == "true"
+
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "127.0.0.1,localhost"
+).split(",")
 
 
+# =========================
+# APPLICATIONS
+# =========================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -17,13 +30,21 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # apps
     "fitness",
 ]
 
 
+# =========================
+# MIDDLEWARE
+# =========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # WhiteNoise (static files in production)
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -37,10 +58,13 @@ ROOT_URLCONF = "fitai.urls"
 WSGI_APPLICATION = "fitai.wsgi.application"
 
 
+# =========================
+# TEMPLATES
+# =========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [],  # можна додати BASE_DIR / "templates" пізніше
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -54,6 +78,9 @@ TEMPLATES = [
 ]
 
 
+# =========================
+# DATABASE
+# =========================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -62,29 +89,50 @@ DATABASES = {
 }
 
 
+# =========================
+# INTERNATIONALIZATION
+# =========================
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Europe/Berlin"
+
+TIME_ZONE = "Europe/Berlin"   # важливо для майбутніх фітнес-даних
 
 USE_I18N = True
 USE_TZ = True
 
 
+# =========================
+# STATIC FILES
+# =========================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [
-    BASE_DIR / "fitness" / "static",
-]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
+# =========================
+# MEDIA
+# =========================
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+# =========================
+# SECURITY (PRODUCTION HARDENING)
+# =========================
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    X_FRAME_OPTIONS = "DENY"
+
+    # optional future hardening
+    SECURE_SSL_REDIRECT = True
 
 
+# =========================
+# DEFAULT AUTO FIELD
+# =========================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

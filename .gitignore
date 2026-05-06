@@ -9,3 +9,5 @@ __pycache__/
 media/
 *.json
 !ml/models/trained_fitness_model_simple.pkl
+!ml/models/feature_importance.json
+!ml/models/training-history.json
