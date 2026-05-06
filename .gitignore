@@ -4,10 +4,9 @@ docker-compose.yml
 __pycache__/
 *.pyc
 .venv/
-*.pkl
 .idea/
 media/
-*.json
+staticfiles/
+
+*.pkl
 !ml/models/trained_fitness_model_simple.pkl
-!ml/models/feature_importance.json
-!ml/models/training-history.json
