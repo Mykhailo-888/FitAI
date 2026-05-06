@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # =========================
 # SECURITY
 # =========================
-SECRET_KEY = os.environ["SECRET_KEY"]  # тільки env, без fallback
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 
 DEBUG = os.environ.get("DEBUG", "false").lower() == "true"
 
