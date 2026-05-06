@@ -12,11 +12,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # =========================
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 
-DEBUG = os.environ.get("DEBUG", "false").lower() == "true"
+# Локально DEBUG=True
+# На Render задаємо DEBUG=False через Environment Variables
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
+    "127.0.0.1,localhost,.onrender.com"
+).split(",")
+
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://*.onrender.com"
 ).split(",")
 
 
@@ -42,7 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # WhiteNoise (static files in production)
+    # WhiteNoise
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -54,6 +61,9 @@ MIDDLEWARE = [
 ]
 
 
+# =========================
+# URLS / WSGI
+# =========================
 ROOT_URLCONF = "fitai.urls"
 WSGI_APPLICATION = "fitai.wsgi.application"
 
@@ -64,7 +74,7 @@ WSGI_APPLICATION = "fitai.wsgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # можна додати BASE_DIR / "templates" пізніше
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -94,7 +104,7 @@ DATABASES = {
 # =========================
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Europe/Berlin"   # важливо для майбутніх фітнес-даних
+TIME_ZONE = "Europe/Berlin"
 
 USE_I18N = True
 USE_TZ = True
@@ -117,7 +127,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # =========================
-# SECURITY (PRODUCTION HARDENING)
+# SECURITY (PRODUCTION)
 # =========================
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
@@ -128,8 +138,11 @@ if not DEBUG:
 
     X_FRAME_OPTIONS = "DENY"
 
-    # optional future hardening
+    # HTTPS redirect only in production
     SECURE_SSL_REDIRECT = True
+
+    # Render reverse proxy support
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # =========================
